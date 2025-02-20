@@ -8,6 +8,7 @@ import (
 type ProductRepository interface {
 	GetProducts() ([]entity.Product, errs.MessageErr)
 	GetProductById(id int) (*entity.Product, errs.MessageErr)
+	GenerateProductId() int
 	CreateProduct(product entity.Product) (*entity.Product, errs.MessageErr)
 }
 
@@ -27,6 +28,14 @@ func (r *productRepository) GetProductById(id int) (*entity.Product, errs.Messag
 	}
 
 	return nil, errs.NewNotFoundError("Product was not found")
+}
+
+func (r *productRepository) GenerateProductId() int {
+	if len(r.db) == 0 {
+		return 1
+	}
+
+	return r.db[len(r.db)-1].ID + 1
 }
 
 func (r *productRepository) CreateProduct(product entity.Product) (*entity.Product, errs.MessageErr) {

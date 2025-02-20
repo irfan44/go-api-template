@@ -1,7 +1,6 @@
 package dto
 
 type ProductRequestDTO struct {
-	ID          int    `json:"id" validate:"required"`
 	Name        string `json:"name" validate:"required"`
 	ProductType string `json:"type" validate:"required"`
 }
