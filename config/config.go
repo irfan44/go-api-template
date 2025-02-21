@@ -6,23 +6,25 @@ import (
 	"github.com/irfan44/go-api-template/pkg/constants"
 )
 
-type Config struct {
-	Http     httpConfig
-	Postgres PostgresConfig
-}
+type (
+	Config struct {
+		Http     httpConfig
+		Postgres PostgresConfig
+	}
 
-type httpConfig struct {
-	Port string
-	Host string
-}
+	httpConfig struct {
+		Port string
+		Host string
+	}
 
-type PostgresConfig struct {
-	Port     string
-	Host     string
-	User     string
-	Password string
-	DBName   string
-}
+	PostgresConfig struct {
+		Port     string
+		Host     string
+		User     string
+		Password string
+		DBName   string
+	}
+)
 
 func NewConfig() Config {
 	cfg := Config{

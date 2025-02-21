@@ -10,15 +10,17 @@ import (
 	"github.com/irfan44/go-api-template/pkg/errs"
 )
 
-type ProductService interface {
-	GetProducts(ctx context.Context) (*dto.GetProductsResponseDTO, errs.MessageErr)
-	GetProductById(id int, ctx context.Context) (*dto.GetProductByIdResponseDTO, errs.MessageErr)
-	CreateProduct(product dto.ProductRequestDTO, ctx context.Context) (*dto.CreateProductResponseDTO, errs.MessageErr)
-}
+type (
+	ProductService interface {
+		GetProducts(ctx context.Context) (*dto.GetProductsResponseDTO, errs.MessageErr)
+		GetProductById(id int, ctx context.Context) (*dto.GetProductByIdResponseDTO, errs.MessageErr)
+		CreateProduct(product dto.ProductRequestDTO, ctx context.Context) (*dto.CreateProductResponseDTO, errs.MessageErr)
+	}
 
-type productService struct {
-	repository repository.ProductRepository
-}
+	productService struct {
+		repository repository.ProductRepository
+	}
+)
 
 func (s *productService) GetProducts(ctx context.Context) (*dto.GetProductsResponseDTO, errs.MessageErr) {
 	products, err := s.repository.GetProducts(ctx)

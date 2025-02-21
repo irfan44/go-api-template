@@ -8,15 +8,17 @@ import (
 	"github.com/irfan44/go-api-template/pkg/errs"
 )
 
-type ProductRepository interface {
-	GetProducts(ctx context.Context) ([]entity.Product, errs.MessageErr)
-	GetProductById(id int, ctx context.Context) (*entity.Product, errs.MessageErr)
-	CreateProduct(product entity.Product, ctx context.Context) (*entity.Product, errs.MessageErr)
-}
+type (
+	ProductRepository interface {
+		GetProducts(ctx context.Context) ([]entity.Product, errs.MessageErr)
+		GetProductById(id int, ctx context.Context) (*entity.Product, errs.MessageErr)
+		CreateProduct(product entity.Product, ctx context.Context) (*entity.Product, errs.MessageErr)
+	}
 
-type productRepository struct {
-	db *sql.DB
-}
+	productRepository struct {
+		db *sql.DB
+	}
+)
 
 func (r *productRepository) GetProducts(ctx context.Context) ([]entity.Product, errs.MessageErr) {
 	query := `
