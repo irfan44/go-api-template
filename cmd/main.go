@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/irfan44/go-api-template/config"
+	"github.com/irfan44/go-api-template/internal/dependency"
 	"github.com/irfan44/go-api-template/internal/server"
 	"github.com/joho/godotenv"
 )
@@ -21,7 +22,12 @@ func init() {
 func main() {
 	cfg := config.NewConfig()
 
-	s := server.NewServer(cfg)
+	db, err := dependency.InitializeDB(cfg)
+	if err != nil {
+		return
+	}
+
+	s := server.NewServer(cfg, db)
 
 	s.Run()
 }

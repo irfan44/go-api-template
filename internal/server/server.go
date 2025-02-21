@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,64 +16,84 @@ import (
 	"github.com/irfan44/go-api-template/internal/domain/product/handler"
 	"github.com/irfan44/go-api-template/internal/domain/product/service"
 	"github.com/irfan44/go-api-template/internal/repository"
-	"github.com/irfan44/go-api-template/pkg/postgres"
 )
 
-type server struct {
-	cfg config.Config
-	mux *http.ServeMux
-}
-
-func (s *server) Run() {
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-
-	defer cancel()
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, os.Interrupt)
-	signal.Notify(ch, syscall.SIGTERM)
-
-	db, err := postgres.NewDB(
-		s.cfg.Postgres.Host,
-		s.cfg.Postgres.Port,
-		s.cfg.Postgres.User,
-		s.cfg.Postgres.Password,
-		s.cfg.Postgres.DBName,
-	)
-
-	docs.SwaggerInfo.Host = fmt.Sprintf("%s%s", s.cfg.Http.Host, s.cfg.Http.Port)
-
-	if err != nil {
-		log.Printf("postgres.NewDB: %s\n", err.Error())
-		return
+type (
+	server struct {
+		cfg config.Config
+		mux *http.ServeMux
+		db  *sql.DB
 	}
 
-	productRepo := repository.NewProductRepository(db)
+	repositories struct {
+		productRepository repository.ProductRepository
+	}
 
-	productService := service.NewProductService(productRepo)
+	services struct {
+		productService service.ProductService
+	}
+)
 
-	validate := validator.New()
+func (s *server) initializeRepositories() *repositories {
+	productRepo := repository.NewProductRepository(s.db)
 
-	productHandler := handler.NewProductHandler(productService, s.mux, validate, ctx)
+	return &repositories{
+		productRepository: productRepo,
+	}
+}
 
+func (s *server) initializeServices(repo *repositories) *services {
+	productService := service.NewProductService(repo.productRepository)
+
+	return &services{
+		productService: productService,
+	}
+}
+
+func (s *server) initializeHandlers(svc *services, v *validator.Validate, ctx context.Context) {
+	productHandler := handler.NewProductHandler(svc.productService, s.mux, v, ctx)
 	productHandler.MapRoutes()
+}
+
+func (s *server) initializeSwagger() {
+	docs.SwaggerInfo.Host = fmt.Sprintf("%s%s", s.cfg.Http.Host, s.cfg.Http.Port)
+}
+
+func (s *server) initializeServer() {
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
-		log.Printf("Listening on PORT: %s\n", s.cfg.Http.Port)
+		log.Printf("Server listening on PORT %s\n", s.cfg.Http.Port)
 		if err := s.runHTTPServer(); err != nil {
-			log.Printf("s.runHTTPServer: %s\n", err.Error())
+			log.Printf("Server error: %s\n", err.Error())
 		}
 	}()
 
 	oscall := <-ch
 
-	fmt.Printf("system call: %+v\n", oscall)
-	db.Close()
+	fmt.Printf("Server shutdown: %+v\n", oscall)
 }
 
-func NewServer(cfg config.Config) *server {
+func (s *server) Run() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	v := validator.New()
+
+	repo := s.initializeRepositories()
+	svc := s.initializeServices(repo)
+	s.initializeHandlers(svc, v, ctx)
+
+	s.initializeSwagger()
+
+	s.initializeServer()
+}
+
+func NewServer(cfg config.Config, db *sql.DB) *server {
 	return &server{
 		cfg: cfg,
 		mux: http.NewServeMux(),
+		db:  db,
 	}
 }
