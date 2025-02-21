@@ -57,10 +57,8 @@ func (s *productService) GetProductById(id int, ctx context.Context) (*dto.GetPr
 }
 
 func (s *productService) CreateProduct(product dto.ProductRequestDTO, ctx context.Context) (*dto.CreateProductResponseDTO, errs.MessageErr) {
-	newProductId := s.repository.GenerateProductId(ctx)
-
 	newProductEntity := entity.Product{
-		ID:          newProductId,
+		ID:          0,
 		Name:        product.Name,
 		ProductType: product.ProductType,
 	}

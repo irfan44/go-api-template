@@ -12,11 +12,9 @@ import (
 	"github.com/irfan44/go-api-template/config"
 	"github.com/irfan44/go-api-template/internal/domain/product/handler"
 	"github.com/irfan44/go-api-template/internal/domain/product/service"
-	"github.com/irfan44/go-api-template/internal/entity"
 	"github.com/irfan44/go-api-template/internal/repository"
+	"github.com/irfan44/go-api-template/pkg/postgres"
 )
-
-const PORT = ":8080"
 
 type server struct {
 	cfg config.Config
@@ -32,7 +30,20 @@ func (s *server) Run() {
 	signal.Notify(ch, os.Interrupt)
 	signal.Notify(ch, syscall.SIGTERM)
 
-	productRepo := repository.NewProductRepository([]entity.Product{})
+	db, err := postgres.NewDB(
+		s.cfg.Postgres.Host,
+		s.cfg.Postgres.Port,
+		s.cfg.Postgres.User,
+		s.cfg.Postgres.Password,
+		s.cfg.Postgres.DBName,
+	)
+
+	if err != nil {
+		log.Printf("postgres.NewDB: %s\n", err.Error())
+		return
+	}
+
+	productRepo := repository.NewProductRepository(db)
 
 	productService := service.NewProductService(productRepo)
 
@@ -50,6 +61,7 @@ func (s *server) Run() {
 	oscall := <-ch
 
 	fmt.Printf("system call: %+v\n", oscall)
+	db.Close()
 }
 
 func NewServer(cfg config.Config) *server {
