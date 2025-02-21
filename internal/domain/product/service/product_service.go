@@ -15,6 +15,7 @@ type (
 		GetProducts(ctx context.Context) (*dto.GetProductsResponseDTO, errs.MessageErr)
 		GetProductById(id int, ctx context.Context) (*dto.GetProductByIdResponseDTO, errs.MessageErr)
 		CreateProduct(product dto.ProductRequestDTO, ctx context.Context) (*dto.CreateProductResponseDTO, errs.MessageErr)
+		UpdateProduct(product dto.ProductRequestDTO, id int, ctx context.Context) (*dto.UpdateProductResponseDTO, errs.MessageErr)
 	}
 
 	productService struct {
@@ -77,6 +78,36 @@ func (s *productService) CreateProduct(product dto.ProductRequestDTO, ctx contex
 			ResponseMessage: "SUCCESS",
 		},
 		Data: *newProduct.ToProductResponseDTO(),
+	}
+
+	return &result, nil
+}
+
+func (s *productService) UpdateProduct(product dto.ProductRequestDTO, id int, ctx context.Context) (*dto.UpdateProductResponseDTO, errs.MessageErr) {
+	_, errCheck := s.repository.GetProductById(id, ctx)
+
+	if errCheck != nil {
+		return nil, errCheck
+	}
+
+	updateProductEntity := entity.Product{
+		ID:          0,
+		Name:        product.Name,
+		ProductType: product.ProductType,
+	}
+
+	updateProduct, errUpdate := s.repository.UpdateProduct(updateProductEntity, id, ctx)
+
+	if errUpdate != nil {
+		return nil, errUpdate
+	}
+
+	result := dto.UpdateProductResponseDTO{
+		BaseResponse: dto.BaseResponse{
+			ResponseCode:    http.StatusOK,
+			ResponseMessage: "SUCCESS",
+		},
+		Data: *updateProduct.ToProductResponseDTO(),
 	}
 
 	return &result, nil

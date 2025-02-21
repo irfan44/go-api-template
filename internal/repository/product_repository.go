@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/irfan44/go-api-template/internal/entity"
 	"github.com/irfan44/go-api-template/pkg/errs"
@@ -13,6 +14,7 @@ type (
 		GetProducts(ctx context.Context) ([]entity.Product, errs.MessageErr)
 		GetProductById(id int, ctx context.Context) (*entity.Product, errs.MessageErr)
 		CreateProduct(product entity.Product, ctx context.Context) (*entity.Product, errs.MessageErr)
+		UpdateProduct(product entity.Product, id int, ctx context.Context) (*entity.Product, errs.MessageErr)
 	}
 
 	productRepository struct {
@@ -28,7 +30,7 @@ func (r *productRepository) GetProducts(ctx context.Context) ([]entity.Product, 
 	rows, err := r.db.Query(query)
 
 	if err != nil {
-		return nil, errs.NewBadRequest("Cannot get products")
+		return nil, errs.NewInternalServerError()
 	}
 
 	result := []entity.Product{}
@@ -57,12 +59,17 @@ func (r *productRepository) GetProductById(id int, ctx context.Context) (*entity
 
 	product := entity.Product{}
 
-	if err := r.db.QueryRow(query, id).Scan(
+	if err := r.db.QueryRowContext(ctx, query, id).Scan(
 		&product.ID,
 		&product.Name,
 		&product.ProductType,
 	); err != nil {
-		return nil, errs.NewNotFoundError("Product was not found")
+		if err == sql.ErrNoRows {
+			return nil, errs.NewNotFoundError(
+				fmt.Sprintf("Product with id %d not found", id),
+			)
+		}
+		return nil, errs.NewInternalServerError()
 	}
 
 	return &product, nil
@@ -75,15 +82,33 @@ func (r *productRepository) CreateProduct(product entity.Product, ctx context.Co
 
 	newProduct := entity.Product{}
 
-	if err := r.db.QueryRow(query, product.Name, product.ProductType).Scan(
+	if err := r.db.QueryRowContext(ctx, query, product.Name, product.ProductType).Scan(
 		&newProduct.ID,
 		&newProduct.Name,
 		&newProduct.ProductType,
 	); err != nil {
-		return nil, errs.NewBadRequest("Cannot add product")
+		return nil, errs.NewInternalServerError()
 	}
 
 	return &newProduct, nil
+}
+
+func (r *productRepository) UpdateProduct(product entity.Product, id int, ctx context.Context) (*entity.Product, errs.MessageErr) {
+	query := `
+		UPDATE product SET name = $1, producttype = $2 WHERE id = $3 RETURNING id, name, producttype;
+	`
+
+	updatedProduct := entity.Product{}
+
+	if err := r.db.QueryRowContext(ctx, query, product.Name, product.ProductType, id).Scan(
+		&updatedProduct.ID,
+		&updatedProduct.Name,
+		&updatedProduct.ProductType,
+	); err != nil {
+		return nil, errs.NewInternalServerError()
+	}
+
+	return &updatedProduct, nil
 }
 
 func NewProductRepository(db *sql.DB) ProductRepository {

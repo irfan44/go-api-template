@@ -78,12 +78,50 @@ func (h *productHandler) CreateProduct() http.HandlerFunc {
 
 		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 			errMsg := errs.NewBadRequest(err.Error())
-			w.WriteHeader(errMsg.StatusCode())
-			json.NewEncoder(w).Encode(errMsg)
+			internal_http.SendResponse(w, errMsg.StatusCode(), errMsg)
 			return
 		}
 
 		result, errData := h.service.CreateProduct(payload, h.ctx)
+
+		if errData != nil {
+			internal_http.SendResponse(w, errData.StatusCode(), errData)
+			return
+		}
+
+		internal_http.SendResponse(w, result.ResponseCode, result)
+	}
+}
+
+// @Summary Update Product
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param id path string true "Product ID"
+// @Param requestBody body ProductRequest true "Request Body"
+// @Success 200 {object} UpdateProductResponse
+// @Router /products/{id} [put]
+func (h *productHandler) UpdateProduct() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+
+		productId, errConv := strconv.Atoi(id)
+
+		if errConv != nil {
+			errMsg := errs.NewBadRequest(errConv.Error())
+			internal_http.SendResponse(w, errMsg.StatusCode(), errMsg)
+			return
+		}
+
+		payload := dto.ProductRequestDTO{}
+
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			errMsg := errs.NewBadRequest(err.Error())
+			internal_http.SendResponse(w, errMsg.StatusCode(), errMsg)
+			return
+		}
+
+		result, errData := h.service.UpdateProduct(payload, productId, h.ctx)
 
 		if errData != nil {
 			internal_http.SendResponse(w, errData.StatusCode(), errData)

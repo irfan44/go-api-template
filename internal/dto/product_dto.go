@@ -26,4 +26,9 @@ type (
 		BaseResponse
 		Data ProductResponseDTO `json:"data"`
 	} // @name CreateProductResponse
+
+	UpdateProductResponseDTO struct {
+		BaseResponse
+		Data ProductResponseDTO `json:"data"`
+	} // @name UpdateProductResponse
 )

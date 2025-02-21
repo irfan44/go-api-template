@@ -19,4 +19,8 @@ func (h *productHandler) MapRoutes() {
 		internal_http.NewAPIPath(http.MethodPost, "/products"),
 		h.CreateProduct(),
 	)
+	h.mux.HandleFunc(
+		internal_http.NewAPIPath(http.MethodPut, "/products/{id}"),
+		h.UpdateProduct(),
+	)
 }

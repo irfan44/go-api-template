@@ -3,7 +3,7 @@ definitions:
   CreateProductResponse:
     properties:
       data:
-        $ref: '#/definitions/dto.ProductResponseDTO'
+        $ref: '#/definitions/ProductResponse'
       responseCode:
         type: integer
       responseMessage:
@@ -12,7 +12,7 @@ definitions:
   GetProductByIdResponse:
     properties:
       data:
-        $ref: '#/definitions/dto.ProductResponseDTO'
+        $ref: '#/definitions/ProductResponse'
       responseCode:
         type: integer
       responseMessage:
@@ -22,7 +22,7 @@ definitions:
     properties:
       data:
         items:
-          $ref: '#/definitions/dto.ProductResponseDTO'
+          $ref: '#/definitions/ProductResponse'
         type: array
       responseCode:
         type: integer
@@ -39,13 +39,22 @@ definitions:
     - name
     - type
     type: object
-  dto.ProductResponseDTO:
+  ProductResponse:
     properties:
       id:
         type: integer
       name:
         type: string
       type:
+        type: string
+    type: object
+  UpdateProductResponse:
+    properties:
+      data:
+        $ref: '#/definitions/ProductResponse'
+      responseCode:
+        type: integer
+      responseMessage:
         type: string
     type: object
 info:
@@ -102,6 +111,31 @@ paths:
           schema:
             $ref: '#/definitions/GetProductByIdResponse'
       summary: Get Products by ID
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Request Body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/ProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UpdateProductResponse'
+      summary: Update Product
       tags:
       - products
 swagger: "2.0"

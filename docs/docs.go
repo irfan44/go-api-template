@@ -91,6 +91,44 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "Update Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Request Body",
+                        "name": "requestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateProductResponse"
+                        }
+                    }
+                }
             }
         }
     },
@@ -99,7 +137,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/dto.ProductResponseDTO"
+                    "$ref": "#/definitions/ProductResponse"
                 },
                 "responseCode": {
                     "type": "integer"
@@ -113,7 +151,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/dto.ProductResponseDTO"
+                    "$ref": "#/definitions/ProductResponse"
                 },
                 "responseCode": {
                     "type": "integer"
@@ -129,7 +167,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.ProductResponseDTO"
+                        "$ref": "#/definitions/ProductResponse"
                     }
                 },
                 "responseCode": {
@@ -155,7 +193,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ProductResponseDTO": {
+        "ProductResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -165,6 +203,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "UpdateProductResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/ProductResponse"
+                },
+                "responseCode": {
+                    "type": "integer"
+                },
+                "responseMessage": {
                     "type": "string"
                 }
             }
