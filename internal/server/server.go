@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/irfan44/go-api-template/config"
+	"github.com/irfan44/go-api-template/docs"
 	"github.com/irfan44/go-api-template/internal/domain/product/handler"
 	"github.com/irfan44/go-api-template/internal/domain/product/service"
 	"github.com/irfan44/go-api-template/internal/repository"
@@ -37,6 +38,8 @@ func (s *server) Run() {
 		s.cfg.Postgres.Password,
 		s.cfg.Postgres.DBName,
 	)
+
+	docs.SwaggerInfo.Host = fmt.Sprintf("%s%s", s.cfg.Http.Host, s.cfg.Http.Port)
 
 	if err != nil {
 		log.Printf("postgres.NewDB: %s\n", err.Error())

@@ -1,0 +1,107 @@
+basePath: /
+definitions:
+  CreateProductResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.ProductResponseDTO'
+      responseCode:
+        type: integer
+      responseMessage:
+        type: string
+    type: object
+  GetProductByIdResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.ProductResponseDTO'
+      responseCode:
+        type: integer
+      responseMessage:
+        type: string
+    type: object
+  GetProductsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.ProductResponseDTO'
+        type: array
+      responseCode:
+        type: integer
+      responseMessage:
+        type: string
+    type: object
+  ProductRequest:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+    required:
+    - name
+    - type
+    type: object
+  dto.ProductResponseDTO:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Basic REST API using Golang
+  title: Example Go REST API
+  version: "1.0"
+paths:
+  /products:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetProductsResponse'
+      summary: Get All Products
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request Body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/ProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/CreateProductResponse'
+      summary: Create New Product
+      tags:
+      - products
+  /products/{id}:
+    get:
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetProductByIdResponse'
+      summary: Get Products by ID
+      tags:
+      - products
+swagger: "2.0"

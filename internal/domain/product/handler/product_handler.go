@@ -18,6 +18,11 @@ type productHandler struct {
 	ctx     context.Context
 }
 
+// @Summary Get All Products
+// @Tags products
+// @Produce json
+// @Success 200 {object} GetProductsResponse
+// @Router /products [get]
 func (h *productHandler) GetProducts() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		result, err := h.service.GetProducts(h.ctx)
@@ -31,6 +36,12 @@ func (h *productHandler) GetProducts() http.HandlerFunc {
 	}
 }
 
+// @Summary Get Products by ID
+// @Tags products
+// @Produce json
+// @Param id path string true "Product ID"
+// @Success 200 {object} GetProductByIdResponse
+// @Router /products/{id} [get]
 func (h *productHandler) GetProductById() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
@@ -54,6 +65,13 @@ func (h *productHandler) GetProductById() http.HandlerFunc {
 	}
 }
 
+// @Summary Create New Product
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param requestBody body ProductRequest true "Request Body"
+// @Success 200 {object} CreateProductResponse
+// @Router /products [post]
 func (h *productHandler) CreateProduct() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		payload := dto.ProductRequestDTO{}
