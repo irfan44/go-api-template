@@ -1,11 +1,22 @@
 package handler
 
-import "fmt"
+import (
+	"net/http"
 
-const PATH = "/products"
+	"github.com/irfan44/go-api-template/pkg/internal_http"
+)
 
 func (h *productHandler) MapRoutes() {
-	h.mux.HandleFunc(fmt.Sprintf("GET %s", PATH), h.GetProducts())
-	h.mux.HandleFunc(fmt.Sprintf("GET %s/{id}", PATH), h.GetProductById())
-	h.mux.HandleFunc(fmt.Sprintf("POST %s", PATH), h.CreateProduct())
+	h.mux.HandleFunc(
+		internal_http.NewAPIPath(http.MethodGet, "/products"),
+		h.GetProducts(),
+	)
+	h.mux.HandleFunc(
+		internal_http.NewAPIPath(http.MethodGet, "/products/{id}"),
+		h.GetProductById(),
+	)
+	h.mux.HandleFunc(
+		internal_http.NewAPIPath(http.MethodPost, "/products"),
+		h.CreateProduct(),
+	)
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/irfan44/go-api-template/internal/domain/product/service"
 	"github.com/irfan44/go-api-template/internal/dto"
 	"github.com/irfan44/go-api-template/pkg/errs"
+	"github.com/irfan44/go-api-template/pkg/internal_http"
 )
 
 type productHandler struct {
@@ -19,53 +20,42 @@ type productHandler struct {
 
 func (h *productHandler) GetProducts() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
 		result, err := h.service.GetProducts(h.ctx)
 
 		if err != nil {
-			w.WriteHeader(err.StatusCode())
-			json.NewEncoder(w).Encode(err)
+			internal_http.SendResponse(w, err.StatusCode(), err)
 			return
 		}
 
-		w.WriteHeader(result.ResponseCode)
-		json.NewEncoder(w).Encode(result)
+		internal_http.SendResponse(w, result.ResponseCode, result)
 	}
 }
 
 func (h *productHandler) GetProductById() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
 		id := r.PathValue("id")
 
 		productId, errConv := strconv.Atoi(id)
 
 		if errConv != nil {
 			errMsg := errs.NewBadRequest(errConv.Error())
-			w.WriteHeader(errMsg.StatusCode())
-			json.NewEncoder(w).Encode(errMsg)
+			internal_http.SendResponse(w, errMsg.StatusCode(), errMsg)
 			return
 		}
 
 		result, errData := h.service.GetProductById(productId, h.ctx)
 
 		if errData != nil {
-			w.WriteHeader(errData.StatusCode())
-			json.NewEncoder(w).Encode(errData)
+			internal_http.SendResponse(w, errData.StatusCode(), errData)
 			return
 		}
 
-		w.WriteHeader(result.ResponseCode)
-		json.NewEncoder(w).Encode(result)
+		internal_http.SendResponse(w, result.ResponseCode, result)
 	}
 }
 
 func (h *productHandler) CreateProduct() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
 		payload := dto.ProductRequestDTO{}
 
 		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
@@ -78,13 +68,11 @@ func (h *productHandler) CreateProduct() http.HandlerFunc {
 		result, errData := h.service.CreateProduct(payload, h.ctx)
 
 		if errData != nil {
-			w.WriteHeader(errData.StatusCode())
-			json.NewEncoder(w).Encode(errData)
+			internal_http.SendResponse(w, errData.StatusCode(), errData)
 			return
 		}
 
-		w.WriteHeader(result.ResponseCode)
-		json.NewEncoder(w).Encode(result)
+		internal_http.SendResponse(w, result.ResponseCode, result)
 	}
 }
 
