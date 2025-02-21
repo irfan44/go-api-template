@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/irfan44/go-api-template/internal/domain/product/service"
 	"github.com/irfan44/go-api-template/internal/dto"
 	"github.com/irfan44/go-api-template/pkg/errs"
@@ -15,6 +16,7 @@ import (
 type productHandler struct {
 	service service.ProductService
 	mux     *http.ServeMux
+	v       *validator.Validate
 	ctx     context.Context
 }
 
@@ -82,6 +84,14 @@ func (h *productHandler) CreateProduct() http.HandlerFunc {
 			return
 		}
 
+		errVal := h.v.Struct(payload)
+
+		if errVal != nil {
+			errMsg := errs.NewBadRequest(errVal.Error())
+			internal_http.SendResponse(w, errMsg.StatusCode(), errMsg)
+			return
+		}
+
 		result, errData := h.service.CreateProduct(payload, h.ctx)
 
 		if errData != nil {
@@ -121,6 +131,14 @@ func (h *productHandler) UpdateProduct() http.HandlerFunc {
 			return
 		}
 
+		errVal := h.v.Struct(payload)
+
+		if errVal != nil {
+			errMsg := errs.NewBadRequest(errVal.Error())
+			internal_http.SendResponse(w, errMsg.StatusCode(), errMsg)
+			return
+		}
+
 		result, errData := h.service.UpdateProduct(payload, productId, h.ctx)
 
 		if errData != nil {
@@ -132,10 +150,11 @@ func (h *productHandler) UpdateProduct() http.HandlerFunc {
 	}
 }
 
-func NewProductHandler(service service.ProductService, mux *http.ServeMux, ctx context.Context) *productHandler {
+func NewProductHandler(service service.ProductService, mux *http.ServeMux, v *validator.Validate, ctx context.Context) *productHandler {
 	return &productHandler{
 		service: service,
 		mux:     mux,
+		v:       v,
 		ctx:     ctx,
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/irfan44/go-api-template/config"
 	"github.com/irfan44/go-api-template/docs"
 	"github.com/irfan44/go-api-template/internal/domain/product/handler"
@@ -50,7 +51,9 @@ func (s *server) Run() {
 
 	productService := service.NewProductService(productRepo)
 
-	productHandler := handler.NewProductHandler(productService, s.mux, ctx)
+	validate := validator.New()
+
+	productHandler := handler.NewProductHandler(productService, s.mux, validate, ctx)
 
 	productHandler.MapRoutes()
 
