@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/irfan44/go-api-template/internal/dto"
@@ -10,17 +11,17 @@ import (
 )
 
 type ProductService interface {
-	GetProducts() (*dto.GetProductsResponseDTO, errs.MessageErr)
-	GetProductById(id int) (*dto.GetProductByIdResponseDTO, errs.MessageErr)
-	CreateProduct(product dto.ProductRequestDTO) (*dto.CreateProductResponseDTO, errs.MessageErr)
+	GetProducts(ctx context.Context) (*dto.GetProductsResponseDTO, errs.MessageErr)
+	GetProductById(id int, ctx context.Context) (*dto.GetProductByIdResponseDTO, errs.MessageErr)
+	CreateProduct(product dto.ProductRequestDTO, ctx context.Context) (*dto.CreateProductResponseDTO, errs.MessageErr)
 }
 
 type productService struct {
 	repository repository.ProductRepository
 }
 
-func (s *productService) GetProducts() (*dto.GetProductsResponseDTO, errs.MessageErr) {
-	products, err := s.repository.GetProducts()
+func (s *productService) GetProducts(ctx context.Context) (*dto.GetProductsResponseDTO, errs.MessageErr) {
+	products, err := s.repository.GetProducts(ctx)
 
 	if err != nil {
 		return nil, err
@@ -37,8 +38,8 @@ func (s *productService) GetProducts() (*dto.GetProductsResponseDTO, errs.Messag
 	return &result, nil
 }
 
-func (s *productService) GetProductById(id int) (*dto.GetProductByIdResponseDTO, errs.MessageErr) {
-	product, err := s.repository.GetProductById(id)
+func (s *productService) GetProductById(id int, ctx context.Context) (*dto.GetProductByIdResponseDTO, errs.MessageErr) {
+	product, err := s.repository.GetProductById(id, ctx)
 
 	if err != nil {
 		return nil, err
@@ -55,8 +56,8 @@ func (s *productService) GetProductById(id int) (*dto.GetProductByIdResponseDTO,
 	return &result, nil
 }
 
-func (s *productService) CreateProduct(product dto.ProductRequestDTO) (*dto.CreateProductResponseDTO, errs.MessageErr) {
-	newProductId := s.repository.GenerateProductId()
+func (s *productService) CreateProduct(product dto.ProductRequestDTO, ctx context.Context) (*dto.CreateProductResponseDTO, errs.MessageErr) {
+	newProductId := s.repository.GenerateProductId(ctx)
 
 	newProductEntity := entity.Product{
 		ID:          newProductId,
@@ -64,7 +65,7 @@ func (s *productService) CreateProduct(product dto.ProductRequestDTO) (*dto.Crea
 		ProductType: product.ProductType,
 	}
 
-	newProduct, err := s.repository.CreateProduct(newProductEntity)
+	newProduct, err := s.repository.CreateProduct(newProductEntity, ctx)
 
 	if err != nil {
 		return nil, err

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -13,13 +14,14 @@ import (
 type productHandler struct {
 	service service.ProductService
 	mux     *http.ServeMux
+	ctx     context.Context
 }
 
 func (h *productHandler) GetProducts() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		result, err := h.service.GetProducts()
+		result, err := h.service.GetProducts(h.ctx)
 
 		if err != nil {
 			w.WriteHeader(err.StatusCode())
@@ -47,7 +49,7 @@ func (h *productHandler) GetProductById() http.HandlerFunc {
 			return
 		}
 
-		result, errData := h.service.GetProductById(productId)
+		result, errData := h.service.GetProductById(productId, h.ctx)
 
 		if errData != nil {
 			w.WriteHeader(errData.StatusCode())
@@ -65,16 +67,15 @@ func (h *productHandler) CreateProduct() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 
 		payload := dto.ProductRequestDTO{}
-		reqBody := r.Body
 
-		if err := json.NewDecoder(reqBody).Decode(&payload); err != nil {
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 			errMsg := errs.NewBadRequest(err.Error())
 			w.WriteHeader(errMsg.StatusCode())
 			json.NewEncoder(w).Encode(errMsg)
 			return
 		}
 
-		result, errData := h.service.CreateProduct(payload)
+		result, errData := h.service.CreateProduct(payload, h.ctx)
 
 		if errData != nil {
 			w.WriteHeader(errData.StatusCode())
@@ -87,9 +88,10 @@ func (h *productHandler) CreateProduct() http.HandlerFunc {
 	}
 }
 
-func NewProductHandler(service service.ProductService, mux *http.ServeMux) *productHandler {
+func NewProductHandler(service service.ProductService, mux *http.ServeMux, ctx context.Context) *productHandler {
 	return &productHandler{
 		service: service,
 		mux:     mux,
+		ctx:     ctx,
 	}
 }
