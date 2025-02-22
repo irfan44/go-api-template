@@ -11,11 +11,11 @@ import (
 	"syscall"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/irfan44/go-api-template/config"
-	"github.com/irfan44/go-api-template/docs"
-	"github.com/irfan44/go-api-template/internal/domain/product/handler"
-	"github.com/irfan44/go-api-template/internal/domain/product/service"
-	"github.com/irfan44/go-api-template/internal/repository"
+	"github.com/irfan44/go-example/config"
+	"github.com/irfan44/go-example/docs"
+	"github.com/irfan44/go-example/internal/domain/product/handler"
+	"github.com/irfan44/go-example/internal/domain/product/service"
+	"github.com/irfan44/go-example/internal/repository"
 )
 
 type (

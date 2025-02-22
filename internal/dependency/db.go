@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/irfan44/go-api-template/config"
-	"github.com/irfan44/go-api-template/pkg/postgres"
+	"github.com/irfan44/go-example/config"
+	"github.com/irfan44/go-example/pkg/postgres"
 )
 
 func InitializeDB(cfg config.Config) (*sql.DB, error) {

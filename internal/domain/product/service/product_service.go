@@ -4,10 +4,10 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/irfan44/go-api-template/internal/dto"
-	"github.com/irfan44/go-api-template/internal/entity"
-	"github.com/irfan44/go-api-template/internal/repository"
-	"github.com/irfan44/go-api-template/pkg/errs"
+	"github.com/irfan44/go-example/internal/dto"
+	"github.com/irfan44/go-example/internal/entity"
+	"github.com/irfan44/go-example/internal/repository"
+	"github.com/irfan44/go-example/pkg/errs"
 )
 
 type (

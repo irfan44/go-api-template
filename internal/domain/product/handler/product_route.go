@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/irfan44/go-api-template/pkg/internal_http"
+	"github.com/irfan44/go-example/pkg/internal_http"
 )
 
 func (h *productHandler) MapRoutes() {

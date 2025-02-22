@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/irfan44/go-api-template/config"
-	"github.com/irfan44/go-api-template/internal/dependency"
-	"github.com/irfan44/go-api-template/internal/server"
+	"github.com/irfan44/go-example/config"
+	"github.com/irfan44/go-example/internal/dependency"
+	"github.com/irfan44/go-example/internal/server"
 	"github.com/joho/godotenv"
 )
 

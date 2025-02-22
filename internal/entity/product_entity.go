@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/irfan44/go-api-template/internal/dto"
+import "github.com/irfan44/go-example/internal/dto"
 
 type Product struct {
 	ID          int

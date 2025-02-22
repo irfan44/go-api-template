@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/irfan44/go-api-template/internal/dto"
+	"github.com/irfan44/go-example/internal/dto"
 )
 
 func NewOKStatusBaseResponse() dto.BaseResponse {

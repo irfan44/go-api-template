@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"github.com/irfan44/go-api-template/pkg/constants"
+	"github.com/irfan44/go-example/pkg/constants"
 )
 
 type (

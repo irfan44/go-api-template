@@ -7,10 +7,10 @@ import (
 	"strconv"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/irfan44/go-api-template/internal/domain/product/service"
-	"github.com/irfan44/go-api-template/internal/dto"
-	"github.com/irfan44/go-api-template/pkg/errs"
-	"github.com/irfan44/go-api-template/pkg/internal_http"
+	"github.com/irfan44/go-example/internal/domain/product/service"
+	"github.com/irfan44/go-example/internal/dto"
+	"github.com/irfan44/go-example/pkg/errs"
+	"github.com/irfan44/go-example/pkg/internal_http"
 )
 
 type productHandler struct {

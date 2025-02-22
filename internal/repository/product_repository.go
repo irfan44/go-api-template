@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/irfan44/go-api-template/internal/entity"
-	"github.com/irfan44/go-api-template/pkg/errs"
+	"github.com/irfan44/go-example/internal/entity"
+	"github.com/irfan44/go-example/pkg/errs"
 )
 
 type (
